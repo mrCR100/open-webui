@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+
 # Initialize device type args
 # use build args in the docker build command with --build-arg="BUILDARG=true"
 ARG USE_CUDA=false
@@ -27,7 +27,9 @@ ARG BUILD_HASH
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+# onnxruntime-node-1.20.1.tgz has a install.js file which trys to download onnxruntime from github.com.
+# but the js file cannot use proxy and fail to install.
+RUN npm ci --verbose --onnxruntime-node-install-cuda=skip
 
 COPY . .
 ENV APP_BUILD_HASH=${BUILD_HASH}
